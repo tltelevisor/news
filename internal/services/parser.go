@@ -162,7 +162,7 @@ func Check_news() {
 }
 
 func Check_news_renew() {
-	renew := false
+	renew := true
 	news_prod := []newsprdct{}
 	Pars(news_prod, renew)
 }
