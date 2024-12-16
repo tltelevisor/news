@@ -1,0 +1,13 @@
+[Unit]
+Description=[news service]
+
+[Service]
+Type=simple
+User=max
+WorkingDirectory=/home/max/news
+ExecStart=/home/max/news/news
+UMask=000
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
