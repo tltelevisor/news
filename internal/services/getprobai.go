@@ -15,6 +15,8 @@ import (
 	translator "github.com/Conight/go-googletrans"
 )
 
+var Opapikey string = ""
+
 type Role string
 
 const (
@@ -121,8 +123,12 @@ func Get_prob_open_ai(news string, product string) (prob float32, just string) {
 	sys_prompt := fmt.Sprintf("Ты эксперт по продукту: %s", product)
 	text_u := fmt.Sprintf("Оцени вероятность необходимости продукта для объекта из новости: %s В начале ответа число от 0 до 1, затем пояснение.", news)
 	mess := []Message_req{{System, sys_prompt}, {User, text_u}}
-	// model := "gpt-3.5-turbo-1106"
-	model := "gpt-3.5-turbo-0125"
+
+	model, error := os.LookupEnv("OPENAI_MODEL")
+	if !error {
+		log.Println("Нет ключа OPENAI_MODEL")
+	}
+
 	data := open_ai_req{model, mess}
 	json_data, err := json.Marshal(data)
 	if err != nil {
@@ -140,12 +146,9 @@ func Get_prob_open_ai(news string, product string) (prob float32, just string) {
 		log.Println("ошибка при формировании запроса: ", err)
 	}
 	req.Header.Add("Content-Type", "application/json")
-	opapikey, exists := os.LookupEnv("OPENAI_API_KEY")
-	if !exists {
-		log.Println("Нет ключа OPENAI_API_KEY")
-	}
+
 	// fmt.Println("Bearer " + opapikey)
-	req.Header.Add("Authorization", "Bearer "+opapikey)
+	req.Header.Add("Authorization", "Bearer "+Opapikey)
 
 	resp, err := http.DefaultClient.Do(req)
 	// resp, err := http.Post(url, "application/json", r)
@@ -158,7 +161,7 @@ func Get_prob_open_ai(news string, product string) (prob float32, just string) {
 		return
 	}
 	var value ChatCompletion
-	err = json.Unmarshal([]byte(body), &value)
+	err = json.Unmarshal(body, &value)
 	if err != nil {
 		log.Println("Ошибка при Unmarshal body.response:", err)
 	}

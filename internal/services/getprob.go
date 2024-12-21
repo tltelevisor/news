@@ -84,7 +84,7 @@ func get_prob(news string, product string) (prob float32, just string) {
 	json_data, err := json.Marshal(data)
 	if err != nil {
 		log.Println("Ошибка в сборке запроса.", err)
-		prob, just = 0.5, "Заглушка при ошибке в сборке запроса."
+		prob, just = 0.5, "Запрос был выполнен с недействительным ключом OPEN AI API key."
 		return
 	}
 
@@ -93,20 +93,20 @@ func get_prob(news string, product string) (prob float32, just string) {
 	resp, err := http.Post("http://5.180.174.86:8001/v1/chat/completions", "application/json", r)
 	if err != nil {
 		log.Println("Ошибка при отправке запроса серверу.", err)
-		prob, just = 0.5, "Заглушка при ошибке в отправке запроса серверу."
+		prob, just = 0.5, "Запрос был выполнен с недействительным ключом OPEN AI API key."
 		return
 	}
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		log.Println("Ошибка при чтении ответа сервера.", err)
-		prob, just = 0.5, "Заглушка при отсутствии ответа сервера."
+		prob, just = 0.5, "Запрос был выполнен с недействительным ключом OPEN AI API key."
 		return
 	}
 	var value prgpt_resp
 	err = json.Unmarshal([]byte(body), &value)
 	if err != nil {
 		log.Println("Ошибка при разборе ответа сервера.", err)
-		prob, just = 0.5, "Заглушка при ошибке в разборе ответа сервера."
+		prob, just = 0.5, "Запрос был выполнен с недействительным ключом OPEN AI API key."
 		return
 	}
 
